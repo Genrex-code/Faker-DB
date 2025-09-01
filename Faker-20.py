@@ -5,6 +5,12 @@ nombre_bd = input("👉 Escribe el nombre de la base de datos: ")
 nombre_tabla = input("👉 Escribe el nombre de la tabla: ")
 num_columnas = int(input("👉 ¿Cuántas columnas tendrá la tabla? "))
 num_registros = int(input("👉 ¿Cuántos registros deseas generar? "))
+#limitante para evitar que esta madre truene
+#aca se consideran sanos alrededor de 4 columnas solamente
+LIMITE_REGISTROS = 100000
+if num_registros > LIMITE_REGISTROS:
+    print("pon un numero mas bajo o va a tronar esta chingadera D:")
+    num_registros = LIMITE_REGISTROS
 #aca como se llamaran las columas y sus tipos de datos que limitamos a char y int
 columnas = []
 for i in range(num_columnas):
@@ -24,7 +30,7 @@ CREATE TABLE IF NOT EXISTS {nombre_tabla} (
     {estructura_columnas}
 );
 """
-
+#que chingue su madre el america
 # Inicializamos faker con 
 # español de México de america 
 # latina de continten africano

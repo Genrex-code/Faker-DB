@@ -79,10 +79,6 @@ fake = Faker('es_MX')
 # Generamos inserts con datos falsos
 #nota se cambio a un metodo delimitado porque estoy tonto
 #  para programar algo mas complejo :D
-
-
-
-
 #borre el desmadre que tenia para incluirlo mejor como un
 #  diccionario optimisando asi el ingreso de datos cuando
 #  se traten de cosas mas grandes de 1 millon de datyos

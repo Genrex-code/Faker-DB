@@ -1,8 +1,7 @@
 from faker import Faker
 import mysql.connector
-
-
-
+import random
+from datetime import date, datetime
 ### ingreso de datos
 nombre_bd = input("Escribe el nombre de la base de datos: ")
 ##ponle INT a los cosos que sean puro numero
@@ -17,9 +16,6 @@ if coneccion.lower() == "servidor":
     password_S = input("Escribe la contraseña del usuario: ")
 else:
     print("se generara el archivo para carga manual")
-
-
-
 #aca agrego la capacidad de crear varias tablas aunque no se si funcione bien
 #porque no lo he probado y me quede sin cereal :D
 tablas = []
@@ -50,9 +46,6 @@ LIMITE_REGISTROS = 100000
 if num_registros > LIMITE_REGISTROS:
     print("pon un numero mas bajo o va a tronar esta chingadera D:")
     num_registros = LIMITE_REGISTROS
-
-
-
 #mejor hare como un stencil y que el usuario meta lo que quiera
 #esto es para crear la estructura de la base de datos
 ### script SQL inicial
@@ -60,7 +53,6 @@ sql_script = f"""
 CREATE DATABASE IF NOT EXISTS {nombre_bd};
 USE {nombre_bd};
 """
-
 #se crea un buccle para cada pedassito 
 for nombre_tabla, columnas in estructura_tablas.items():
     estructura_columnas = ",\n     ".join(columnas)
@@ -75,7 +67,10 @@ for nombre_tabla, columnas in estructura_tablas.items():
 # español de México de america 
 # latina de continten africano
 # porque todos aca son negros D:
+#con esto se genera como maincra :0
 fake = Faker('es_MX')
+Faker.seed(0)
+random.seed(0)
 # Generamos inserts con datos falsos
 #nota se cambio a un metodo delimitado porque estoy tonto
 #  para programar algo mas complejo :D
@@ -84,9 +79,47 @@ fake = Faker('es_MX')
 #  se traten de cosas mas grandes de 1 millon de datyos
 for _ in range(num_registros):
       columnas_nombres = ",".join([col.split()[0] for col in columnas])
-      valores = ",".join(["'VALOR_FAKE'" for _ in columnas])
+      valores = ",".join(["VALOR_FAKE" for _ in columnas])
+generadores = {
+      "nombre": fake.name,
+    "email": fake.unique.email,
+    "telefono": fake.phone_number,
+    "celular": fake.phone_number,
+    "ciudad": fake.city,
+    "pais": fake.country,
+    "direccion": fake.address,
+    "postal": fake.postcode,
+    "postcode": fake.postcode,
+    "ssn": fake.ssn,
+    "username": fake.user_name,
+    "usuario": fake.user_name,
+    "compañia": fake.company,
+    "empresa": fake.company,
+    "trabajo": fake.job,
+    "fecha": fake.date,
+    "fecha_nacimiento": fake.date_of_birth,
+    "color" : fake.color_name,
+    "producto": fake.word,
+    "lenguaje": fake.language_name,
+    "idioma" : fake.language_name,
+    "numero": lambda: random.randint(1, 10000),
+    "tarjeta" : fake.credit_card_number,
+    "precio" : lambda: round(random.uniform(10.0, 1000)),
+    "salario" : lambda: random.randint(3000, 100000),
+    "int": lambda: random.randint(1, 10000),
+    "varchar": lambda: fake.word(),
+    "descripcion" : lambda: fake.sentence(nb_words=6),
+    #los que siguen aca abajo los estoy testeando por eso esta asi
+    #"banco" : fake.bank,
+    #"curp" : fake.curp,
+    #"nif" : fake.nif,
+    #"rfc" : fake.rfc,
+    "civil_estatus" : lambda: random.choice(["Soltero", "Casado", "Divorciado", "Viudo"]),
+    "genero" : lambda: random.choice(["Masculino", "Femenino", "Otro"]),
+    "boolean": lambda: random.choice([0, 1]),
+}
       #se carga los inserts
-      sql_script += f"""
+sql_script += f"""
 INSERT INTO {nombre_tabla}({columnas_nombres}) VALUES ({valores})
 """
 # Guardar script en archivo .sql 

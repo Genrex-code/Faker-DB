@@ -6,6 +6,7 @@ from datetime import date, datetime
 nombre_bd = input("Escribe el nombre de la base de datos: ")
 ##ponle INT a los cosos que sean puro numero
 num_tablas = int(input("Cuantas tablas deseas?"))
+#que chingue a su madre el america
 num_registros = int(input("¿Cuántos registros deseas generar? "))
 coneccion = input("desea el archivo para carga manual o carga en servidor? (manual/servidor):")
 #este if sirve para separar la automatizacion del scrip de generacion estandar
@@ -22,7 +23,7 @@ tablas = []
 estructura_tablas = {} #diccionario para almacenar la estructura de cada tabla
 for i in range(num_tablas):
                nombre_tabla = input(f"Escribe el nombre de la tabla {i+1}: ")
-               tablas.append ("{nombre_tabla}")
+               tablas.append ({nombre_tabla})
 
                num_columnas = int(input(f"¿Cuántas columnas tendrá la tabla {nombre_tabla}? "))
 columnas = []
@@ -79,7 +80,7 @@ random.seed(0)
 #  se traten de cosas mas grandes de 1 millon de datyos
 for _ in range(num_registros):
       columnas_nombres = ",".join([col.split()[0] for col in columnas])
-      valores = ",".join(["VALOR_FAKE" for _ in columnas])
+      valores = ",".join([generadores for _ in columnas])
 generadores = {
       "nombre": fake.name,
     "email": fake.unique.email,
@@ -93,6 +94,7 @@ generadores = {
     "ssn": fake.ssn,
     "username": fake.user_name,
     "usuario": fake.user_name,
+    #que chigue a su madre el america
     "compañia": fake.company,
     "empresa": fake.company,
     "trabajo": fake.job,
@@ -118,6 +120,65 @@ generadores = {
     "genero" : lambda: random.choice(["Masculino", "Femenino", "Otro"]),
     "boolean": lambda: random.choice([0, 1]),
 }
+#carga de ecepciones o como se escriba
+def Safe_call_generador(func):
+      #esta madre es para que no si enceuntra en el diccionario alguna par no esplote
+      try:
+            if func is None:
+                  return None
+            return func()
+      except Exception:
+            return None
+      except Exception:
+            return None
+
+# correcion 24/09/2024 pasador literal de sql para evitar errores
+#y acomoda el detalle de fechas y comillas de miscuel
+def sql_literal(value, tipo_col):
+      if value is None:
+            return "NULL"
+      t = tipo_col.lower()
+      if isinstance(value,(int,float)):
+            return str(value)
+      if isinstance(value, (date, datetime)):
+            #que chingue a su madre el america
+            return f"'{value,(date,datetime)}'"
+      if "int" in t or "decimal" in t or "float" in t or "double" in t or "numeric" in t:
+            return str(value)
+      s = str(value)
+      s = s.replace("'", "''")  # Escapar comillas simples
+      return f"'{s}'"
+# devuelve un valor python acorde a la columan en raw piton para asi generar masivamente sin sobrecargar
+#en pocas palabras mete datos a lo estupido y completamente ramdom segun el tipo de dato
+#pero al ser tan ramdom puede que no sea tan exacto
+#pero si muy rapido
+#y muy masibo
+#y que chingue a su madre el america
+def generar_valor_raw(nombre_col, tipo_col):
+      #me dio weba hacer un labda asi que lo hice asi de tonto con una varaible t
+      name= nombre_col.lower()
+      t = tipo_col.lower()
+    #seccion apra ints o numeros o cosos para contar poes
+if "int" in t or "integer" in t or "bigint" in t or "smallint" in t or "tinyint" in t:
+      return random.randint(1,10000) #aca se cambiar el rango 
+if "float" in t or "double" in t or "decimal" in t or "numeric" in t or "real" in t:
+      return round(random.uniform(1.0,10000.0),2) #aca se cambia el rango pero dividido para dar decimales
+#aca genero fechas ya que son solo un faker
+if "date" in t or "time" in t or "timestamp" in t:
+      if "nacimiento" in name or "birth" in name or "cumpl" in name:
+            dob = Safe_call_generador(generadores.get("fecha_nacimiento"))
+            if dob: return dob
+            #un retorno mas general y resando que el sql literal se encargue porque que flojera termianr esta madre
+            d = Safe_call_generador(generadores.get("fecha"))
+        return d
+#aca va un soporte para los de diccionarios y que genere mas:
+for clave, func in generadores.items():
+      if clave in name:
+            if func is None:
+                  continue
+            val = Safe_call_generador(func)
+            if val is not None:
+                  return val
       #se carga los inserts
 sql_script += f"""
 INSERT INTO {nombre_tabla}({columnas_nombres}) VALUES ({valores})
@@ -146,6 +207,7 @@ if coneccion.lower() == "servidor":
             print("esto puede tardar un poco dependiendo de la cantidad de datos")
             print("no cierres el programa >:v")
             print("------ Cargando... ------")
+            #que chingue a su madre el america :v
             print("TODABIA NO HAN GENERADO QUERIES :D ESO LO HACES TU")
      except Exception as e:
             print("Error al conectar a la base de datos:", e)

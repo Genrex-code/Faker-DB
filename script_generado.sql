@@ -1,0 +1,9 @@
+
+CREATE DATABASE IF NOT EXISTS WAOS;
+USE WAOS;
+
+CREATE TABLE IF NOT EXISTS asd (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    genero varchar
+);
+INSERT INTO asd(genero) VALUES ('Femenino');

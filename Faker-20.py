@@ -2,13 +2,26 @@ from faker import Faker
 import mysql.connector
 import random
 from datetime import date, datetime
+#colores para que el código sea más fácil de leer
+class bcolors:
+    HEADER = '\033[95m' # Púrpura *
+    OKBLUE = '\033[94m'# Azul ligeramente más oscuro *
+    OKCYAN = '\033[96m' # Azul *
+    OKGREEN = '\033[92m' # Verde azul *
+    WARNING = '\033[93m' # Amarillo brillante *
+    FAIL = '\033[91m'# Rojo
+    BOLD = '\033[1m' # Negritas
+    UNDERLINE = '\033[4m' # Subrayar texto
+    ENDC = '\033[0m' # Terminar bcolors (???????)
+    WHITE = '\033[37m' # Blanco * 
 
 # ingreso de datos
-nombre_bd = input("Escribe el nombre de la base de datos: ")
-num_tablas = int(input("¿Cuántas tablas deseas? "))
-num_registros = int(input("¿Cuántos registros deseas generar? "))
-coneccion = input("¿Desea el archivo para carga manual o carga en servidor? (manual/servidor): ")
+nombre_bd = input(bcolors.BOLD + "Escribe el nombre de la base de datos: " + bcolors.ENDC)
+num_tablas = int(input(bcolors.OKBLUE + "¿Cuántas tablas deseas? " + bcolors.ENDC))
+num_registros = int(input(bcolors.WARNING + "¿Cuántos registros deseas generar? " + bcolors.ENDC))
+coneccion = input(bcolors.HEADER + "¿Desea el archivo para carga manual o carga en servidor? (manual/servidor): " + bcolors.ENDC)
 
+#este if sirve para separar la automatizacion del scrip de generacion estandar
 if coneccion.lower() == "servidor":
     host_S = input("Escribe el host (ej: localhost): ")
     user_S = input("Escribe el usuario de la base de datos: ")
@@ -18,15 +31,14 @@ else:
 
 tablas = []
 estructura_tablas = {}  # diccionario para almacenar columnas de cada tabla
-
 for i in range(num_tablas):
-    nombre_tabla = input(f"Escribe el nombre de la tabla {i+1}: ")
+    nombre_tabla = input(bcolors.OKGREEN + f"Escribe el nombre de la tabla {i+1}: " + bcolors.ENDC)
     tablas.append(nombre_tabla)
-    num_columnas = int(input(f"¿Cuántas columnas tendrá la tabla {nombre_tabla}? (Recomendado ≤ 4) "))
+    num_columnas = int(input(bcolors.OKCYAN + f"¿Cuántas columnas tendrá la tabla {nombre_tabla}? (Recomendado ≤ 4) " + bcolors.ENDC))
     columnas = []
     for j in range(num_columnas):
-        nombre_col = input(f"Nombre de la columna {j+1} de la tabla {nombre_tabla}:\n (Ej: nombre, email, telefono, ciudad, pais, direccion, postal, ssn, usuario, compañia, trabajo, fecha, color, producto, lenguaje, numero, tarjeta, precio, salario): ")
-        tipo_col = input(f"Tipo de dato para {nombre_col} (ej: VARCHAR(100), INT): ")
+        nombre_col = input(bcolors.WARNING + f"Nombre de la columna {j+1} de la tabla {nombre_tabla}:\n (Ej: nombre, email, telefono, ciudad): " + bcolors.ENDC)
+        tipo_col = input(bcolors.WHITE + f"Tipo de dato para {nombre_col} (ej: VARCHAR(100), INT): " + bcolors.ENDC)
         columnas.append(f"{nombre_col} {tipo_col}")
     estructura_tablas[nombre_tabla] = columnas
 
@@ -34,7 +46,6 @@ LIMITE_REGISTROS = 50000
 if num_registros > LIMITE_REGISTROS:
     print(f"El número de registros excede el límite {LIMITE_REGISTROS}, se ajustará a este valor.")
     num_registros = LIMITE_REGISTROS
-
 # Inicializamos faker
 fake = Faker('es_MX')
 Faker.seed(0)
@@ -149,9 +160,9 @@ for nombre_tabla, columnas in estructura_tablas.items():
 with open("script_generado.sql", "w", encoding="utf-8") as archivo:
     archivo.write(sql_script)
 
-print("\nScript SQL generado con éxito en 'script_generado.sql'")
-print("------ Vista previa ------")
-print(sql_script[:700], "...\n------ Fin de la vista previa ------\n------ EL RESTO ESTÁ EN WORKBENCH ------\n")
+print(bcolors.OKGREEN+"\nScript SQL generado con éxito en 'script_generado.sql'"+ bcolors.ENDC)
+print(bcolors.WHITE+"------ Vista previa ------")
+print(sql_script[:700], bcolors.BOLD+"...\n------ Fin de la vista previa ------\n------ EL RESTO ESTÁ EN WORKBENCH ------\n"+ bcolors.ENDC)
 
 if coneccion.lower() == "servidor":
     try:
@@ -162,16 +173,16 @@ if coneccion.lower() == "servidor":
             database=nombre_bd
         )
         cursor = conexion.cursor()
-        print("Conexión exitosa :D")
-        print("Creando base de datos y tablas...")
+        print(bcolors.OKGREEN+"Conexión exitosa :D"+ bcolors.ENDC)
+        print(bcolors.BOLD+"Creando base de datos y tablas..."+ bcolors.ENDC)
         for query in sql_script.split(';'):
             query = query.strip()
             if query:
                 cursor.execute(query)
         conexion.commit()
 
-        print("Insertando datos ... esto puede tardar un poco dependiendo de la cantidad de datos...")
-        print("No cierres el programa >:v")
+        print(bcolors.HEADER+"Insertando datos ... esto puede tardar un poco dependiendo de la cantidad de datos..."+ bcolors.ENDC)
+        print(bcolors.BOLD+"No cierres el programa"+ bcolors.ENDC)
 
         # Ejecución de los inserts (solo la parte INSERT)
         inserts = [line for line in sql_script.split('\n') if line.strip().upper().startswith("INSERT INTO")]
@@ -180,10 +191,10 @@ if coneccion.lower() == "servidor":
             cursor.execute(insert)
             if i % 1000 == 0:
                 conexion.commit()
-                print(f"{i} de {total_inserts} registros insertados...")
+                print(bcolors.BOLD+f"{i} de {total_inserts} registros insertados..."+ bcolors.ENDC)
         conexion.commit()
-        print("Datos insertados correctamente.")
+        print(bcolors.OKGREEN+"Datos insertados correctamente."+ bcolors.ENDC)
         cursor.close()
         conexion.close()
     except Exception as e:
-        print("Error al conectar o insertar en la base de datos:", e)
+        print(bcolors.WARNING+"Error al conectar o insertar en la base de datos:"+ bcolors.ENDC, e)

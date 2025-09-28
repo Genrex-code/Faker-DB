@@ -25,12 +25,12 @@ for i in range(num_tablas):
     num_columnas = int(input(f"¿Cuántas columnas tendrá la tabla {nombre_tabla}? (Recomendado ≤ 4) "))
     columnas = []
     for j in range(num_columnas):
-        nombre_col = input(f"Nombre de la columna {j+1} de la tabla {nombre_tabla}: ")
+        nombre_col = input(f"Nombre de la columna {j+1} de la tabla {nombre_tabla}:\n (Ej: nombre, email, telefono, ciudad, pais, direccion, postal, ssn, usuario, compañia, trabajo, fecha, color, producto, lenguaje, numero, tarjeta, precio, salario): ")
         tipo_col = input(f"Tipo de dato para {nombre_col} (ej: VARCHAR(100), INT): ")
         columnas.append(f"{nombre_col} {tipo_col}")
     estructura_tablas[nombre_tabla] = columnas
 
-LIMITE_REGISTROS = 100000
+LIMITE_REGISTROS = 50000
 if num_registros > LIMITE_REGISTROS:
     print(f"El número de registros excede el límite {LIMITE_REGISTROS}, se ajustará a este valor.")
     num_registros = LIMITE_REGISTROS
@@ -170,7 +170,7 @@ if coneccion.lower() == "servidor":
                 cursor.execute(query)
         conexion.commit()
 
-        print("Insertando datos h... esto puede tardar un poco dependiendo de la cantidad de datos...")
+        print("Insertando datos ... esto puede tardar un poco dependiendo de la cantidad de datos...")
         print("No cierres el programa >:v")
 
         # Ejecución de los inserts (solo la parte INSERT)

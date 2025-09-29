@@ -78,7 +78,7 @@ random.seed(0)
 
 generadores = {
     "nombre": fake.name,
-    "email": fake.unique.email,
+    "email": fake.email,
     "telefono": fake.phone_number,
     "celular": fake.phone_number,
     "ciudad": fake.city,
@@ -117,9 +117,9 @@ generadores = {
     "estado" : fake.state,
     "estado_provincia" : fake.state,
     "region" : fake.state,
-    "departamento" : fake.department,
     "navegador" : fake.user_agent,
-    "plataforma" : fake.platform,
+    "curp" : fake.curp,
+    "rfc" : fake.rfc,
     "cvv" : fake.credit_card_security_code,
     "marca" : lambda: random.choice(["Toyota", "Ford", "Chevrolet", "Honda", "Nissan"]),
     "modelo" : lambda: random.choice(["Sedan", "SUV", "Hatchback", "Convertible", "Truck"]),
@@ -128,8 +128,6 @@ generadores = {
     "color_vehiculo" : fake.color_name,
     "curso" : lambda: random.choice(["Matemáticas", "Historia", "Ciencia", "Literatura", "Arte"]),
     "calificacion" : lambda: random.choice(["A", "B", "C", "D", "F"]),
-    "curp" : fake.curp,
-    "rfc" : fake.rfc,
     "nacionalidad" : fake.country,
     "religion" : lambda: random.choice(["Católica", "Protestante", "Musulmana", "Judía", "Hindú", "Budista", "Atea"]),
     "estado_civil" : lambda: random.choice(["Soltero", "Casado", "Divorciado", "Viudo"]),
@@ -223,7 +221,7 @@ generadores = {
     "clase" : lambda: random.choice(["Económica", "Business", "Primera"]),
     "hotel" : fake.company() + " Hotel",
     "habitacion" : lambda: random.randint(100, 999),
-    "noches" : fake.ramdom_int(min=1, max=30),
+    "noches" : lambda: random.randint(1,30),
     "pasaporte" : fake.bothify(text='??######'),
     "visa" : fake.bothify(text='##########'),
     "licencia" : fake.bothify(text='##########'),
@@ -365,3 +363,4 @@ if coneccion.lower() == "servidor":
         conexion.close()
     except Exception as e:
         print(bcolors.WARNING+"Error al conectar o insertar en la base de datos:"+ bcolors.ENDC, e)
+        

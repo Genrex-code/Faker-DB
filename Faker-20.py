@@ -14,11 +14,36 @@ class bcolors:
     UNDERLINE = '\033[4m' # Subrayar texto
     ENDC = '\033[0m' # Terminar bcolors (???????)
     WHITE = '\033[37m' # Blanco * 
+#para las ecepciones
+def pedir_entero(mensaje):
+    while True:
+        try:
+            valor = int(input(mensaje))
+            if valor <= 0:
+                print("Ingresa un número mayor a 0.")
+            else:
+                return valor
+        except ValueError:
+            print("Solo se permiten números enteros.")
 
 # ingreso de datos
-nombre_bd = input(bcolors.BOLD + "Escribe el nombre de la base de datos: " + bcolors.ENDC)
-num_tablas = int(input(bcolors.OKBLUE + "¿Cuántas tablas deseas? " + bcolors.ENDC))
-num_registros = int(input(bcolors.WARNING + "¿Cuántos registros deseas generar? " + bcolors.ENDC))
+#con excepciones para que no se caiga el programa
+print(bcolors.HEADER + bcolors.BOLD + "Generador de datos falsos para MySQL" + bcolors.ENDC)
+print(bcolors.OKGREEN + "Crea bases de datos y tablas con datos de prueba")
+while True:
+    nombre_bd = input(bcolors.BOLD + "Escribe el nombre de la base de datos: " + bcolors.ENDC).strip()
+    if nombre_bd == "":
+        print(bcolors.FAIL + "El nombre no puede estar vacío, intenta de nuevo." + bcolors.ENDC)
+    else:
+        break
+while True:
+    if " " in nombre_bd:
+        print(bcolors.FAIL + "El nombre no puede contener espacios, intenta de nuevo." + bcolors.ENDC)
+        nombre_bd = input(bcolors.BOLD + "Escribe el nombre de la base de datos: " + bcolors.ENDC).strip()
+    else:
+        break
+num_tablas = pedir_entero(bcolors.OKBLUE + "¿Cuántas tablas deseas? " + bcolors.ENDC)
+num_registros = pedir_entero(bcolors.WARNING + "¿Cuántos registros deseas generar? " + bcolors.ENDC)
 coneccion = input(bcolors.HEADER + "¿Desea el archivo para carga manual o carga en servidor? (manual/servidor): " + bcolors.ENDC)
 
 #este if sirve para separar la automatizacion del scrip de generacion estandar
@@ -83,8 +108,9 @@ generadores = {
     "civil_estatus" : lambda: random.choice(["Soltero", "Casado", "Divorciado", "Viudo"]),
     "genero" : lambda: random.choice(["Masculino", "Femenino", "Otro"]),
     "boolean": lambda: random.choice([0, 1]),
-}
+    "id" :fake.uuid4(),
 
+    }
 def safe_call_generador(func):
     try:
         if func is None:
@@ -132,6 +158,10 @@ def generar_valor_raw(nombre_col, tipo_col):
                 return val
     # Por defecto, generar palabra corta
     return fake.word()
+# escapador de identificadores con espacios (esto no se usa pero por si acaso)
+def Identificador_S(name):
+    return "`" + str(name).replace("`", "``") + "`"
+
 
 # Generar script SQL inicial para base y tablas
 sql_script = f"""

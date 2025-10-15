@@ -245,6 +245,7 @@ generadores = {
     "genero_juego" : lambda: random.choice(["Acción", "Aventura", "RPG", "Estrategia", "Deportes"]),
     "nickname" : fake.user_name,
     "gamer_tag" : fake.user_name,
+    "voltaje" : fake.v
     }
 def safe_call_generador(func):
     try:

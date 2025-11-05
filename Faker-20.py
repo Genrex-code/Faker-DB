@@ -2,6 +2,7 @@ from faker import Faker
 import mysql.connector
 import random
 from datetime import date, datetime
+LINEA = 10;
 #colores para que el código sea más fácil de leer
 class bcolors:
     HEADER = '\033[95m' # Púrpura *

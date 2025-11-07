@@ -23,12 +23,24 @@ class Parametros(BaseModel):
 # Función principal de generación
 # -------------------------------
 def generar_datos(param: Parametros):
+    # -------------------------------
+    # Límite de seguridad para no generar demasiados datos
+    # -------------------------------
+    LIMITE_REGISTROS = 100
+    mensaje_aviso = ""
+    if param.num_registros > LIMITE_REGISTROS:
+        mensaje_aviso = f"⚠️ Se ajustó la cantidad máxima a {LIMITE_REGISTROS} registros."
+        param.num_registros = LIMITE_REGISTROS
+
+    # -------------------------------
+    # Inicialización de Faker y aleatorios
+    # -------------------------------
     fake = Faker('es_MX')
     Faker.seed(0)
     random.seed(0)
 
     # -------------------------------
-    # Diccionario de generadores (versión completa del original)
+    # Diccionario de generadores (resumen del original)
     # -------------------------------
     generadores = {
         "nombre": fake.name,
@@ -64,6 +76,9 @@ def generar_datos(param: Parametros):
         "tipo_sangre": lambda: random.choice(["A+", "O-", "B+", "AB-"]),
     }
 
+    # -------------------------------
+    # Funciones auxiliares
+    # -------------------------------
     def safe_call_generador(func):
         try:
             if func is None:
@@ -101,7 +116,7 @@ def generar_datos(param: Parametros):
         return fake.word()
 
     # -------------------------------
-    # Generación de SQL
+    # Generación del script SQL
     # -------------------------------
     sql_script = f"CREATE DATABASE IF NOT EXISTS {param.nombre_bd};\nUSE {param.nombre_bd};\n"
 
@@ -128,13 +143,16 @@ CREATE TABLE IF NOT EXISTS {nombre_tabla} (
             sql_script += f"INSERT INTO {nombre_tabla}({columnas_nombres}) VALUES ({','.join(valores_sql)});\n"
 
     # -------------------------------
-    # Guardar script o ejecutar según el modo
+    # Modo MANUAL → genera archivo .sql
     # -------------------------------
     if param.modo.lower() == "manual":
         with open("script_generado.sql", "w", encoding="utf-8") as f:
             f.write(sql_script)
-        return f"{param.num_registros} registros generados en {param.num_tablas} tabla(s) — archivo 'script_generado.sql' listo."
+        return f"{mensaje_aviso} {param.num_registros} registros generados en {param.num_tablas} tabla(s). Archivo 'script_generado.sql' listo."
 
+    # -------------------------------
+    # Modo SERVIDOR → inserta en MySQL
+    # -------------------------------
     elif param.modo.lower() == "servidor":
         try:
             conexion = mysql.connector.connect(
@@ -150,9 +168,12 @@ CREATE TABLE IF NOT EXISTS {nombre_tabla} (
             conexion.commit()
             cursor.close()
             conexion.close()
-            return f"{param.num_registros} registros insertados en {param.num_tablas} tabla(s) de la base '{param.nombre_bd}'."
+            return f"{mensaje_aviso} {param.num_registros} registros insertados en {param.num_tablas} tabla(s) de la base '{param.nombre_bd}'."
         except Exception as e:
             return f"❌ Error al conectar o insertar en MySQL: {e}"
 
+    # -------------------------------
+    # Si el modo no es válido
+    # -------------------------------
     else:
         return "⚠️ Modo no válido. Usa 'manual' o 'servidor'."

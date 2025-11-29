@@ -8,8 +8,8 @@ fake = Faker("es_MX")
 
 def generar_datos(nombre_bd, num_tablas, num_registros, modo, host=None, user=None, password=None):
 
-    if num_registros > 100:
-        raise ValueError("No puedes generar más de 100 registros por tabla.")
+    if num_registros > 150:
+        raise ValueError("No puedes generar más de 150 registros por tabla.")
 
     script_sql = []
     tablas_generadas = 0

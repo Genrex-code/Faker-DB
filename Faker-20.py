@@ -219,8 +219,8 @@ generadores = {
     "vuelo" : fake.bothify(text='??####'),
     "asiento" : fake.bothify(text='?#'),
     "clase" : lambda: random.choice(["Económica", "Business", "Primera"]),
-    "hotel" : fake.company() + " Hotel",
-    "habitacion" : lambda: random.randint(100, 999),
+    "hotel": lambda: fake.company() + " Hotel",
+    "habitacion": lambda: random.randint(100, 999),
     "noches" : lambda: random.randint(1,30),
     "pasaporte" : fake.bothify(text='??######'),
     "visa" : fake.bothify(text='##########'),
@@ -244,8 +244,8 @@ generadores = {
     "plataforma_juego" : lambda: random.choice(["Steam", "Epic Games", "Origin", "Uplay"]),
     "genero_juego" : lambda: random.choice(["Acción", "Aventura", "RPG", "Estrategia", "Deportes"]),
     "nickname" : fake.user_name,
+    "voltaje": lambda: random.randint(1, 480),
     "gamer_tag" : fake.user_name,
-    "voltaje" : fake.v
     }
 def safe_call_generador(func):
     try:

@@ -1,5 +1,5 @@
 #imports rancios
-
+#duerman al programador que hiso esto
 
 print("Generador de base de datos sinteticos")
 print("Crea datos para pruebas en ambientes controlados :3")

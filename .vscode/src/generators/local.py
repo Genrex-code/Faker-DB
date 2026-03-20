@@ -4,7 +4,8 @@ import random
 import pandas as pd 
 import numpy as np
 import string 
-from main import NumFila,tipocolumnas,nombre_col,COLUMNAS
+#el import pasado lo pasare como argumentos de def
+
 fake = Faker ('es_MX')
 #recordar agregar el cambiar de idioma
 #nota les meti abreviaciones porque si
@@ -36,7 +37,7 @@ def BIGDEC (NumFila,tipocolumna,nombre_col):
 
 def BIGSTR (NumFila,tipocolumna,nombre_col):
     name = nombre_col.lower()
-    type = tipocolumnas.lower()
+    type = tipocolumna.lower()
     amn = NumFila
     if "bigstr" in type:
         return random.choice(string.ascii_letters)

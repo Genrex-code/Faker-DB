@@ -1,5 +1,7 @@
 from faker import Faker
 from F_dic.faker_chingadere import capacidades , fake
+from main import *
+from main import tipocolumnas,COLUMNAS
 import random
 import pandas as pd 
 import numpy as np
@@ -14,10 +16,10 @@ fake = Faker ('es_MX')
 #que si sabesmos aunque estemos vagnado con esto
 
 #busca en el diccionario y ejecuta la funcion
-def natural (tipo,NumFila):
+def natural (NumFila,tipocolumna,nombre_col):
     #para buscar
-    if tipo in capacidades:
-        return [capacidades[tipo]() for i in range(NumFila)]
+    if capacidades in capacidades:
+        return [capacidades() for i in range(NumFila)]
     else:
         return fake.word(),["ERROR:NO SE ENCONTRO UN TIPO EXACTO SE APLICARA UN GENERATIVO GENERICO"]
     
@@ -57,4 +59,3 @@ def ARMADO (NumFila,tipocolumna,nombre_col):
             #duerman al programador y regresenlo al kinder
         else:
             dataset [col] = ["Dato no soporto 💋"] * NumFila
-    return dataset

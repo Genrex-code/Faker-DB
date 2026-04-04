@@ -4,7 +4,7 @@
 import sys
 from generators.local import armar_dataset_local
 # NOTA MENTAL: Cuando quieras que el CSV funcione de verdad, importa tu exporter aquí arriba.
-
+from generators.grandote import generar_masivo # Importamos el generador de alto rendimiento
 class State: 
     """
     EL pipilinais: director del flujo de trabajo recibe la orden del main y manda a trabajar a los generadores y exportadores
@@ -43,6 +43,26 @@ class State:
 
         if modo_perrita:
             print("💋 MODO PERRITA ACTIVADO: Sin validaciones, sin límites. Y LA QUESO 💋.")
+            
+            # Como el modo perrita se lanza por comando sin preguntar en el menú,
+            # si el usuario no mandó filas, le ensartamos 1 millón para el test de estrés xd
+            if filas == 0:
+                filas = 1000000
+                print(f"🐶 [PIPILINAIS] Como no especificaste, te van {filas} filas por defecto.")
+            
+            # Si las columnas están por defecto de los tonotos, metemos basura
+            if columnas == ['nombre', 'email']:
+                columnas = ['id_caos', 'texto_basura1', 'texto_basura2']
+                
+            # Mandamos a llamar al grandote
+            self.dataset = generar_masivo(filas, columnas)
+            
+        else:
+            # Flujo normal para los mortales
+            self.dataset = armar_dataset_local(filas, columnas)
+
+        # La exportación sigue igual para todos
+        self.exportar_datos(formato_salida)
     
         # ¡Corregido! Ya están dentro del 'run' y usando 'self.dataset'
         self.dataset = armar_dataset_local(filas, columnas)

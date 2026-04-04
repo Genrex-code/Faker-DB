@@ -118,7 +118,6 @@ generadores = {
     "estado_provincia" : fake.state,
     "region" : fake.state,
     "navegador" : fake.user_agent,
-    "curp" : fake.curp,
     "rfc" : fake.rfc,
     "cvv" : fake.credit_card_security_code,
     "marca" : lambda: random.choice(["Toyota", "Ford", "Chevrolet", "Honda", "Nissan"]),
